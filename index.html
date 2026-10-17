@@ -100,7 +100,7 @@
   <!-- Cloud Sync Status Alert Bar (Hidden unless error occurs) -->
   <div id="firebaseErrorNotice" class="hidden bg-red-600 text-white text-[11px] font-bold px-3 py-1.5 text-center flex items-center justify-center gap-2">
     <i class="fa-solid fa-triangle-exclamation"></i>
-    <span id="firebaseErrorNoticeMsg">Firebase Rules-ல் அனுமதி வழங்கப்பட வேண்டும். விவரங்களுக்கு கீழே பார்க்கவும்.</span>
+    <span id="firebaseErrorNoticeMsg">கிளவுட் தரவுத்தள இணைப்புப் பிழை ஏற்பட்டுள்ளது.</span>
   </div>
 
   <header class="bg-[#164E3D] text-white shadow-md sticky top-0 z-40 border-b-2 border-[#FACC15]">
@@ -130,7 +130,7 @@
           <span id="syncStatusText" class="hidden sm:inline">நேரலை</span>
         </div>
 
-        <!-- Master Auth Slot (Only active Master badge shown when logged in) -->
+        <!-- Master Auth Slot -->
         <div id="masterAuthSlot" class="flex items-center"></div>
       </div>
     </div>
@@ -157,6 +157,7 @@
 
   <main class="flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-5 space-y-5">
 
+    <!-- Registration Section -->
     <section id="tabRegister" class="space-y-4">
       <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-4 sm:p-6">
         <div class="border-b border-emerald-100 pb-3.5 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -182,7 +183,7 @@
               </label>
               <div class="relative">
                 <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                <input type="text" id="mName" required placeholder="முழு பெயர் உள்ளிடவும்"
+                <input type="text" id="mName" required maxlength="100" placeholder="முழு பெயர் உள்ளிடவும்"
                   class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-300 focus:border-[#164E3D] focus:ring-1 focus:ring-emerald-200 outline-none text-xs sm:text-sm bg-white">
               </div>
             </div>
@@ -194,7 +195,7 @@
               </label>
               <div class="relative">
                 <i class="fa-solid fa-user-group absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                <input type="text" id="mFather" required placeholder="தந்தை அல்லது கணவர் பெயர்"
+                <input type="text" id="mFather" required maxlength="100" placeholder="தந்தை அல்லது கணவர் பெயர்"
                   class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-300 focus:border-[#164E3D] focus:ring-1 focus:ring-emerald-200 outline-none text-xs sm:text-sm bg-white">
               </div>
             </div>
@@ -257,7 +258,7 @@
               </div>
             </div>
 
-            <!-- Officer Designation Box with "Other" (மற்றவை) option -->
+            <!-- Officer Designation Box with "Other" option -->
             <div id="officerDesignationBox" class="hidden sm:col-span-2 bg-emerald-50/60 p-3 rounded-xl border border-emerald-200">
               <label class="block text-xs font-bold text-[#164E3D] mb-1">
                 பொறுப்பாளர் பதவிப் பெயர் <span class="text-red-500">*</span>
@@ -278,12 +279,12 @@
                 </select>
               </div>
               <div id="otherDesignationBox" class="hidden mt-2">
-                <input type="text" id="mOtherDesignation" placeholder="புதிய பதவிப் பெயரை இங்கே உள்ளிடவும்..."
+                <input type="text" id="mOtherDesignation" maxlength="60" placeholder="புதிய பதவிப் பெயரை இங்கே உள்ளிடவும்..."
                   class="w-full px-3 py-2 rounded-xl border border-gray-300 focus:border-[#164E3D] outline-none text-xs bg-white">
               </div>
             </div>
 
-            <!-- Member Photo Upload (Optimized compression to fit within Firestore limit) -->
+            <!-- Member Photo Upload -->
             <div class="sm:col-span-2">
               <label class="block text-xs font-bold text-gray-700 mb-1">
                 உறுப்பினர் புகைப்படம் <span class="text-red-500">*</span>
@@ -294,8 +295,16 @@
                   <span>புகைப்படம் தேர்வு செய் (கட்டாயம்)</span>
                   <input type="file" id="mPhotoInput" accept="image/*" class="hidden" onchange="window.handleMemberPhotoSelected(event)">
                 </label>
-                <div id="mPhotoPreviewBox" class="hidden items-center gap-2">
+                <div id="mPhotoPreviewBox" class="hidden items-center gap-2 flex-wrap">
                   <img id="mPhotoPreview" src="" alt="Preview" class="w-9 h-9 rounded-full object-cover border-2 border-[#164E3D]">
+                  <span id="photoCompressNotice" class="text-[10px] text-emerald-700 font-bold">தயார் ✓</span>
+                  
+                  <!-- Form Photo Download Button (Strictly for Master Admin) -->
+                  <button type="button" id="formPhotoDownloadBtn" onclick="window.downloadFormPhoto()" class="hidden text-xs text-[#164E3D] font-bold hover:underline tap-active items-center gap-1 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-300 transition" title="படிவத்தில் உள்ள புகைப்படத்தைப் பதிவிறக்கு (Master Admin)">
+                    <i class="fa-solid fa-download text-[11px] text-emerald-700"></i>
+                    <span>பதிவிறக்கு</span>
+                  </button>
+                  
                   <button type="button" onclick="window.clearMemberPhoto()" class="text-xs text-red-600 font-bold hover:underline tap-active">நீக்கு</button>
                 </div>
               </div>
@@ -314,6 +323,7 @@
       </div>
     </section>
 
+    <!-- Directory Section -->
     <section id="tabDirectory" class="hidden space-y-3.5">
       <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-3.5 sm:p-5">
         
@@ -340,10 +350,8 @@
           </div>
         </div>
 
-        <!-- Optimized Member Cards Grid -->
-        <div id="memberListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <!-- Populated instantly via JavaScript -->
-        </div>
+        <!-- Member Cards Grid -->
+        <div id="memberListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
 
         <!-- Empty State -->
         <div id="directoryEmptyState" class="hidden text-center py-10">
@@ -356,6 +364,7 @@
       </div>
     </section>
 
+    <!-- News & Messages Section -->
     <section id="tabMessages" class="hidden space-y-3.5">
       <div class="bg-white rounded-2xl shadow-sm border border-emerald-100 p-3.5 sm:p-5">
         
@@ -367,13 +376,4 @@
         </div>
 
         <!-- Post Message Form -->
-        <form id="messagePostForm" onsubmit="window.handleMessageSubmit(event)" class="bg-[#F8FAF9] border border-emerald-100 rounded-xl p-3.5 mb-4 space-y-3">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div>
-              <label class="block text-[11px] font-bold text-gray-700 mb-1">உங்கள் பெயர் <span class="text-red-500">*</span></label>
-              <input type="text" id="msgAuthor" required placeholder="பெயர்"
-                class="w-full px-3 py-2 rounded-xl border border-gray-300 text-xs outline-none focus:border-[#164E3D] bg-white">
-            </div>
-            <div>
-              <label class="block text-[11px] font-bold text-gray-700 mb-1">செய்தித் தலைப்பு <span class="text-red-500">*</span></label>
-              <input type="text" id="msgTitle" required placeholde
+        <form id="messagePostForm" onsubmit="window.handleMessageSubmit(event)" class="bg-[#F8FAF9] border border-emerald-100 rou
